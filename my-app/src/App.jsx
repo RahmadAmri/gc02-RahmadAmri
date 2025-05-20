@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
+import Card from "./components/card";
 
 function App() {
-  const [result, setResult] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -18,56 +18,27 @@ function App() {
       });
 
       if (!email) {
+        localStorage.removeItem("access_token");
         return alert("Email is required");
       }
       if (!password) {
+        localStorage.removeItem("access_token");
         return alert("Password is required");
       }
 
       const data = await response.json();
-      localStorage.setItem("access_token", data.token);
 
       if (data.token) {
+        localStorage.setItem("access_token", data.token);
         return alert("Succes Login");
       } else {
+        localStorage.removeItem("access_token");
         return alert("Invalid Email or Password");
       }
     } catch (error) {
       console.error(error);
     }
   };
-  const handleDelete = async (id) => {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
-      return alert("Please login first to delete data");
-    }
-
-    const response = await fetch(`http://localhost:3000/lodging/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response) {
-      return alert("Failed to deleted");
-    }
-    await getPub();
-  };
-
-  const getPub = async () => {
-    const response = await fetch("http://localhost:3000/pub");
-    setResult(await response.json());
-  };
-
-  const detailPub = async (id) => {
-    const response = await fetch(`http://localhost:3000/pub/${id}`);
-    setResult(await response.json());
-  };
-
-  useEffect(() => {
-    getPub();
-  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -184,42 +155,7 @@ function App() {
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {result?.data?.length ? (
-          result.data.map((el, index) => (
-            <div
-              key={index}
-              className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-            >
-              <figure>
-                <img
-                  className="w-full h-[300px] object-cover"
-                  src={el.imgUrl}
-                  alt={el.name}
-                />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{el.name}</h2>
-                <p>{el.facility}</p>
-                <div className="card-actions justify-end">
-                  <button
-                    onClick={() => {
-                      handleDelete(el.id);
-                    }}
-                    className="btn btn-primary"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="col-span-3 text-center py-8">
-            <p className="text-lg">loading...</p>
-          </div>
-        )}
-      </div>
+      <Card />
     </div>
   );
 }
