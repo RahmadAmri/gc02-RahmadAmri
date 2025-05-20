@@ -33,7 +33,9 @@ export default function Card() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <input value={q} onChange={(e) => setQ(e.target.value)} />
+      <label>
+        <input value={q} onChange={(e) => setQ(e.target.value)} />
+      </label>
       {result?.data?.length ? (
         result.data.map((el, index) => (
           <div
