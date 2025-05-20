@@ -6,14 +6,63 @@ function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleLogin = async (el) => {
+    el.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!email) {
+        return alert("Email is required");
+      }
+      if (!password) {
+        return alert("Password is required");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("access_token", data.token);
+
+      if (data.token) {
+        return alert("Succes Login");
+      } else {
+        return alert("Invalid Email or Password");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleDelete = async (id) => {
+    const access_token = localStorage.getItem("access_token");
+    if (!access_token) {
+      return alert("Please login first to delete data");
+    }
+
+    const response = await fetch(`http://localhost:3000/lodging/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response) {
+      return alert("Failed to deleted");
+    }
+    await getPub();
+  };
+
   const getPub = async () => {
-    const res = await fetch("http://localhost:3000/pub");
-    setResult(await res.json());
+    const response = await fetch("http://localhost:3000/pub");
+    setResult(await response.json());
   };
 
   const detailPub = async (id) => {
-    const res = await fetch(`http://localhost:3000/pub/${id}`);
-    setResult(await res.json());
+    const response = await fetch(`http://localhost:3000/pub/${id}`);
+    setResult(await response.json());
   };
 
   useEffect(() => {
@@ -108,27 +157,29 @@ function App() {
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-96 border p-4">
           <legend className="fieldset-legend">Login</legend>
 
-          <label className="label">Email</label>
-          <input
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            type="email"
-            className="input input-bordered w-full"
-            placeholder="Email"
-          />
+          <form onSubmit={handleLogin}>
+            <label className="label">Email</label>
+            <input
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              type="email"
+              className="input input-bordered w-full"
+              placeholder="Email"
+            />
 
-          <label className="label">Password</label>
-          <input
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            type="password"
-            className="input input-bordered w-full"
-            placeholder="Password"
-          />
+            <label className="label">Password</label>
+            <input
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              type="password"
+              className="input input-bordered w-full"
+              placeholder="Password"
+            />
 
-          <button type="submit" className="btn btn-neutral mt-4 w-full">
-            Login
-          </button>
+            <button type="submit" className="btn btn-neutral mt-4 w-full">
+              Login
+            </button>
+          </form>
         </fieldset>
       </div>
 
@@ -151,8 +202,13 @@ function App() {
                 <h2 className="card-title">{el.name}</h2>
                 <p>{el.facility}</p>
                 <div className="card-actions justify-end">
-                  <button onChange={detailPub} className="btn btn-primary">
-                    Detail
+                  <button
+                    onClick={() => {
+                      handleDelete(el.id);
+                    }}
+                    className="btn btn-primary"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
