@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
+import Swal from "sweetalert2";
 
 const initialForm = {
   name: "",
@@ -13,7 +14,6 @@ const initialForm = {
 
 export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
   const isEdit = dataToEdit ? true : false;
-
   const [form, setForm] = useState(initialForm);
   const [types, setTypes] = useState([]);
 
@@ -23,11 +23,23 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
 
   const createLodging = async () => {
     try {
-      await api.post("/lodging", form);
+      const response = await api.post("/lodging", form);
       getAllData();
+      if (response) {
+        Swal.fire({
+          title: "Succes Added",
+          text: "Lodging added succesfully",
+          icon: "success",
+        });
+      }
     } catch (error) {
       console.log(error);
-      alert("");
+      alert(error.response.data.message);
+      Swal.fire({
+        title: "Error Delete",
+        text: error.response.data.message,
+        icon: "error",
+      });
     }
   };
 
@@ -38,7 +50,7 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
       setForm(initialForm);
       setDataToEdit(null);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("");
     }
   };
@@ -66,58 +78,75 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
       }}
       className="grid grid-cols-2 gap-4 mb-6"
     >
-      <input
-        required
-        value={form.name}
-        onChange={(e) => onChangeForm("name", e.target.value)}
-      />
-      <input
-        required
-        value={form.facility}
-        onChange={(e) => onChangeForm("facility", e.target.value)}
-      />
       <div className="flex flex-col">
-        <label htmlFor="roomCapacity">Room Capacity</label>
+        <label>Name</label>
         <input
-          required
-          id="roomCapacity"
+          value={form.name}
+          onChange={(e) => onChangeForm("name", e.target.value)}
+        />
+      </div>
+      <div className="flex flex-col">
+        <label>Facility</label>
+        <input
+          value={form.facility}
+          onChange={(e) => onChangeForm("facility", e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label>Room Capacity</label>
+        <input
           value={form.roomCapacity}
           type="number"
           onChange={(e) => onChangeForm("roomCapacity", e.target.value)}
         />
       </div>
-      <input
-        required
-        value={form.imgUrl}
-        onChange={(e) => onChangeForm("imgUrl", e.target.value)}
-      />
-      <input
-        required
-        value={form.location}
-        onChange={(e) => onChangeForm("location", e.target.value)}
-      />
-      <input
-        required
-        type="number"
-        value={form.price}
-        onChange={(e) => onChangeForm("price", e.target.value)}
-      />
-      <select
-        required
-        disabled={!types?.length}
-        value={form.TypeId}
-        onChange={(e) => onChangeForm("TypeId", e.target.value)}
+      <div className="flex flex-col">
+        <label>Image Url</label>
+        <input
+          value={form.imgUrl}
+          onChange={(e) => onChangeForm("imgUrl", e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label>Location</label>
+        <input
+          value={form.location}
+          onChange={(e) => onChangeForm("location", e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label>Price</label>
+        <input
+          type="number"
+          value={form.price}
+          onChange={(e) => onChangeForm("price", e.target.value)}
+        />
+      </div>
+      <div className="flex flex-col col-span-2">
+        <label>Type</label>
+        <select
+          disabled={!types?.length}
+          value={form.TypeId}
+          onChange={(e) => onChangeForm("TypeId", e.target.value)}
+        >
+          <option disabled>Choose type</option>
+          {types?.map((e) => {
+            return (
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+
+      <button
+        type="submit"
+        className=" bg-blue-600 text-white h-9 rounded-full w-fit mx-auto px-6 col-span-2"
       >
-        <option disabled>Choose type</option>
-        {types?.map((e) => {
-          return (
-            <option key={e.id} value={e.id}>
-              {e.name}
-            </option>
-          );
-        })}
-      </select>
-      <button type="submit" className="col-span-2">
         {isEdit ? "Update" : "Add"}
       </button>
     </form>

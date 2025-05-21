@@ -2,6 +2,8 @@ import { useState } from "react";
 import "./App.css";
 import Card from "./components/card";
 import Navbar from "./components/navbar";
+import api from "./api/api";
+import Swal from "sweetalert2";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -10,34 +12,39 @@ function App() {
   const handleLogin = async (el) => {
     el.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      if (!email && !password) {
+        localStorage.removeItem("access_token");
+        Swal.fire({
+          title: "error login",
+          text: "email or password is required",
+          icon: "error",
+        });
+      } else {
+        Swal.fire({
+          title: "Succes login",
+          text: "Welcome Back",
+          icon: "success",
+        });
+      }
+
+      const response = await api.post("/login", {
+        email,
+        password,
       });
 
-      if (!email) {
-        localStorage.removeItem("access_token");
-        return alert("Email is required");
-      }
-      if (!password) {
-        localStorage.removeItem("access_token");
-        return alert("Password is required");
-      }
-
-      const data = await response.json();
-
-      if (data.token) {
-        localStorage.setItem("access_token", data.token);
-        return alert("Succes Login");
+      if (!response) {
+        throw "Invalid Email or Password";
       } else {
-        localStorage.removeItem("access_token");
-        return alert("Invalid Email or Password");
+        localStorage.setItem("access_token", response.data.token);
       }
     } catch (error) {
       console.error(error);
+      localStorage.removeItem("access_token");
+      Swal.fire({
+        title: "Error Login",
+        text: error,
+        icon: "error",
+      });
     }
   };
 
@@ -47,7 +54,7 @@ function App() {
       <Navbar />
 
       {/* Login Form */}
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center mt-6 mb-8">
         <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-96 border p-4">
           <legend className="fieldset-legend">Login</legend>
 
@@ -70,7 +77,7 @@ function App() {
               placeholder="Password"
             />
 
-            <button type="submit" className="btn btn-neutral mt-4 w-full">
+            <button type="submit" className="btn btn-primary mt-4 w-full">
               Login
             </button>
           </form>

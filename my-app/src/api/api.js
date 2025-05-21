@@ -16,8 +16,8 @@ api.interceptors.request.use(
 
     return req;
   },
-  (err) => {
-    return Promise.reject(err);
+  (error) => {
+    console.error(error);
   }
 );
 
@@ -25,12 +25,12 @@ api.interceptors.response.use(
   (res) => {
     return res;
   },
-  async (err) => {
-    if (err?.response?.status === 401) {
+  async (error) => {
+    if (error?.response?.status === 401) {
       localStorage.removeItem("access_token");
       window.location.href = "/";
     }
-    return Promise.reject(err);
+    console.error(error);
   }
 );
 

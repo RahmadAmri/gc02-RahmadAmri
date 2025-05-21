@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 import AddEdit from "./add-edit";
+import Swal from "sweetalert2";
 
 export default function Card() {
   const [result, setResult] = useState([]);
@@ -10,11 +11,28 @@ export default function Card() {
   const handleDelete = async (id) => {
     try {
       const response = (await api.delete(`/lodging/${id}`)).data;
-      alert(response?.message);
+
+      if (response) {
+        Swal.fire({
+          title: "Success delete",
+          text: response.message,
+          icon: "success",
+        });
+      } else {
+        Swal.fire({
+          title: "Error Delete",
+          text: "Please login first",
+          icon: "error",
+        });
+      }
       await getPub();
     } catch (error) {
-      console.log(error);
-      alert("Failed to deleted");
+      console.error(error);
+      // Swal.fire({
+      //   title: "Error Delete",
+      //   text: error,
+      //   icon: "error",
+      // });
     }
   };
 
@@ -22,6 +40,14 @@ export default function Card() {
     try {
       const response = (await api.get(`/pub?search=${q}`)).data;
       setResult(response);
+
+      if (!response.data.length) {
+        Swal.fire({
+          title: "Not Found",
+          text: "There is no Lodging",
+          icon: "error",
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -98,7 +124,7 @@ export default function Card() {
           ))
         ) : (
           <div className="col-span-3 text-center py-8">
-            <p className="text-lg">No ...</p>
+            <p className="text-lg">....</p>
           </div>
         )}
       </div>
