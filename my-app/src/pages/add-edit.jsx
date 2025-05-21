@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const initialForm = {
   name: "",
@@ -23,6 +24,14 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
 
   const createLodging = async () => {
     try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        return Swal.fire({
+          title: "Adding Failed",
+          text: "Please login first!",
+          icon: "error",
+        });
+      }
       const response = await api.post("/lodging", form);
       getAllData();
       if (response) {
@@ -32,23 +41,38 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
           icon: "success",
         });
       }
+      if (!response) {
+        throw "Invalid input";
+      }
     } catch (error) {
       console.log(error);
-      alert(error.response.data.message);
       Swal.fire({
-        title: "Error Delete",
-        text: error.response.data.message,
-        icon: "error",
+        title: "Error",
+        text: "Please fill all form",
+        icon: "warning",
       });
     }
   };
 
   const updateLodging = async () => {
     try {
-      await api.put(`/lodging/${form.id}`, form);
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        return Swal.fire({
+          title: "Fail to edit",
+          text: "Please login first",
+          icon: "error",
+        });
+      }
+      const response = await api.put(`/lodging/${form.id}`, form);
       getAllData();
       setForm(initialForm);
       setDataToEdit(null);
+      Swal.fire({
+        title: "Success Edit",
+        text: response.data.message,
+        icon: "success",
+      });
     } catch (error) {
       console.error(error);
       alert("");

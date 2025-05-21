@@ -1,4 +1,5 @@
 import axios from "axios";
+import { redirect } from "react-router";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -28,7 +29,8 @@ api.interceptors.response.use(
   async (error) => {
     if (error?.response?.status === 401) {
       localStorage.removeItem("access_token");
-      window.location.href = "/";
+      //
+      redirect("/");
     }
     console.error(error);
   }

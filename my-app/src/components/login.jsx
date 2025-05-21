@@ -1,19 +1,30 @@
 import { useState } from "react";
-import "./App.css";
-import Card from "./components/card";
-import Navbar from "./components/navbar";
-import api from "./api/api";
+import Navbar from "../components/navbar";
+import api from "../api/api";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
-function App() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (el) => {
     el.preventDefault();
+
     try {
+      const response = await api.post("/login", {
+        email,
+        password,
+      });
+
+      if (!response) {
+        throw "Invalid Email or Password";
+      }
+
       if (!email && !password) {
         localStorage.removeItem("access_token");
+        navigate("/login");
         Swal.fire({
           title: "error login",
           text: "email or password is required",
@@ -25,17 +36,8 @@ function App() {
           text: "Welcome Back",
           icon: "success",
         });
-      }
-
-      const response = await api.post("/login", {
-        email,
-        password,
-      });
-
-      if (!response) {
-        throw "Invalid Email or Password";
-      } else {
         localStorage.setItem("access_token", response.data.token);
+        navigate("/");
       }
     } catch (error) {
       console.error(error);
@@ -85,9 +87,8 @@ function App() {
       </div>
 
       {/* Cards Grid */}
-      <Card />
     </div>
   );
 }
 
-export default App;
+export default Login;

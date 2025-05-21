@@ -1,4 +1,8 @@
+import { NavLink, useNavigate } from "react-router";
+
 export default function Navbar() {
+  const { handleLogout, handleLogin, handleAdd } = useNavigate();
+
   return (
     <div className="navbar bg-primary text-primary-content shadow-sm">
       <div className="navbar-start">
@@ -28,13 +32,38 @@ export default function Navbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Homepage</a>
+              <NavLink to="/login" end>
+                <a
+                  onClick={() => {
+                    localStorage.removeItem("access_token");
+                    handleLogout("/login");
+                  }}
+                >
+                  Logout
+                </a>
+              </NavLink>
             </li>
             <li>
-              <a>Portfolio</a>
+              <NavLink to="/" end>
+                <a
+                  onClick={() => {
+                    handleLogin("/");
+                  }}
+                >
+                  HomePage
+                </a>
+              </NavLink>
             </li>
             <li>
-              <a>About</a>
+              <NavLink to="/add" end>
+                <a
+                  onClick={() => {
+                    handleAdd("/add");
+                  }}
+                >
+                  Add Lodging
+                </a>
+              </NavLink>
             </li>
           </ul>
         </div>

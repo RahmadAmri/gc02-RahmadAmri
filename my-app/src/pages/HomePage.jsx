@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
-import AddEdit from "../pages/add-edit";
 import Swal from "sweetalert2";
+import Navbar from "../components/navbar";
 
-export default function Card() {
+export default function HomePage() {
   const [result, setResult] = useState([]);
   const [q, setQ] = useState("");
-  const [dataToEdit, setDataToEdit] = useState(null);
 
   const handleDelete = async (id) => {
     try {
-      const response = (await api.delete(`/lodging/${id}`)).data;
+      const response = await api.delete(`/lodging/${id}`);
+      const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        Swal.fire({
+          title: "Error Delete",
+          text: "Please login first",
+          icon: "error",
+        });
+      }
 
       if (response) {
         Swal.fire({
@@ -54,11 +62,7 @@ export default function Card() {
 
   return (
     <div className="">
-      <AddEdit
-        getAllData={getPub}
-        dataToEdit={dataToEdit}
-        setDataToEdit={setDataToEdit}
-      />
+      <Navbar />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -98,6 +102,7 @@ export default function Card() {
                 <p>{el.facility}</p>
                 <div className="card-actions justify-end">
                   <button
+                    type="button"
                     onClick={() => {
                       setDataToEdit(el);
                     }}
@@ -106,6 +111,7 @@ export default function Card() {
                     Update
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       handleDelete(el.id);
                     }}
