@@ -9,6 +9,8 @@ export default function HomePage({ setDataToEdit }) {
   const [result, setResult] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [sortBy, setSortBy] = useState("name-asc");
   const navigate = useNavigate();
 
   const handleDetail = async (id) => {
@@ -101,12 +103,39 @@ export default function HomePage({ setDataToEdit }) {
   const getPub = async () => {
     try {
       const response = (await api.get(`/pub?search=${search}`)).data;
-      setResult(response);
+      let filteredData = [...response.data];
 
-      if (!response.data.length) {
+      // filter
+      if (priceRange.min !== "" || priceRange.max !== "") {
+        filteredData = filteredData.filter((item) => {
+          const price = Number(item.price);
+          const min = priceRange.min === "" ? 0 : Number(priceRange.min);
+          const max = priceRange.max === "" ? Infinity : Number(priceRange.max);
+          return price >= min && price <= max;
+        });
+      }
+
+      //  sorting
+      filteredData.sort((a, b) => {
+        switch (sortBy) {
+          case "price-asc":
+            return Number(a.price) - Number(b.price);
+          case "price-desc":
+            return Number(b.price) - Number(a.price);
+          case "name-desc":
+            return b.name.localeCompare(a.name);
+          case "name-asc":
+          default:
+            return a.name.localeCompare(b.name);
+        }
+      });
+
+      setResult({ ...response, data: filteredData });
+
+      if (!filteredData.length) {
         Swal.fire({
           title: "Not Found",
-          text: "There is no Lodging",
+          text: "There is no Lodging matching your criteria",
           icon: "error",
         });
       }
@@ -117,7 +146,7 @@ export default function HomePage({ setDataToEdit }) {
 
   useEffect(() => {
     getPub();
-  }, []);
+  }, [sortBy]);
 
   const itemsPerPage = 6;
   const lastIndex = currentPage * itemsPerPage;
@@ -129,42 +158,83 @@ export default function HomePage({ setDataToEdit }) {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            getPub();
-            setCurrentPage(1);
-          }}
-          className="mb-8 max-w-2xl mx-auto"
-        >
-          <div className="relative flex items-center shadow-md rounded-lg overflow-hidden">
-            <input
-              value={search}
-              placeholder="Search for lodgings..."
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full py-3 px-4 pr-12 border-0 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            />
-            <Button
-              type="submit"
-              variant="primary"
-              className="absolute right-0 h-full px-6 flex items-center justify-center"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        <div className="mb-8 max-w-4xl mx-auto">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              getPub();
+              setCurrentPage(1);
+            }}
+            className="space-y-4"
+          >
+            {/* Search input */}
+            <div className="relative flex items-center shadow-md rounded-lg overflow-hidden">
+              <input
+                value={search}
+                placeholder="Search for lodgings..."
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full py-3 px-4 pr-12 border-0 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              />
+              <Button
+                type="submit"
+                variant="primary"
+                className="absolute right-0 h-full px-6 flex items-center justify-center"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </Button>
+            </div>
+
+            {/* Filter and Sort */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min Price"
+                  value={priceRange.min}
+                  onChange={(e) =>
+                    setPriceRange((prev) => ({ ...prev, min: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"
                 />
-              </svg>
-            </Button>
-          </div>
-        </form>
+                <span className="text-gray-500">to</span>
+                <input
+                  type="number"
+                  placeholder="Max Price"
+                  value={priceRange.max}
+                  onChange={(e) =>
+                    setPriceRange((prev) => ({ ...prev, max: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="name-asc">Name (A-Z)</option>
+                  <option value="name-desc">Name (Z-A)</option>
+                  <option value="price-asc">Price (Low to High)</option>
+                  <option value="price-desc">Price (High to Low)</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentItems.length ? (
@@ -279,54 +349,42 @@ export default function HomePage({ setDataToEdit }) {
           )}
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         {result?.data?.length > 0 && (
-          <div className="mt-8">
-            <div className="flex justify-center items-center gap-2">
+          <div className="mt-8 flex flex-col items-center gap-4">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className={`px-3 py-1 rounded ${
+                className={`px-6 py-2 rounded-lg ${
                   currentPage === 1
                     ? "bg-gray-200 text-gray-500"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
-                } transition-colors`}
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
               >
                 Previous
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-8 h-8 rounded ${
-                      currentPage === page
-                        ? "bg-blue-600 text-white"
-                        : "bg-white text-blue-600 hover:bg-blue-50"
-                    } transition-colors`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+              <div className="bg-blue-600 text-white px-6 py-2 rounded-lg">
+                {currentPage}
+              </div>
 
               <button
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className={`px-3 py-1 rounded ${
+                className={`px-6 py-2 rounded-lg ${
                   currentPage === totalPages
                     ? "bg-gray-200 text-gray-500"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
-                } transition-colors`}
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
               >
                 Next
               </button>
             </div>
 
-            <div className="text-center text-gray-600 mt-4">
+            <div className="text-gray-600">
               Showing {firstIndex + 1} to{" "}
               {Math.min(lastIndex, result.data.length)} of {result.data.length}{" "}
               entries
