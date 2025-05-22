@@ -3,6 +3,7 @@ import api from "../api/api";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 import Navbar from "../components/navbar";
+import Button from '../components/Button';
 
 const initialForm = {
   name: "",
@@ -199,13 +200,14 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center">
-          <button
+        <div className="flex justify-end space-x-4 mt-8">
+          <Button
             type="submit"
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+            variant="primary"
+            className="w-full md:w-auto"
           >
-            {isEdit ? "Update Lodging" : "Add Lodging"}
-          </button>
+            {isEdit ? "Update Lodging" : "Create Lodging"}
+          </Button>
         </div>
       </form>
     </div>

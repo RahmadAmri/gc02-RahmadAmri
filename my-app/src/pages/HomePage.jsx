@@ -3,6 +3,7 @@ import api from "../api/api";
 import Swal from "sweetalert2";
 import Navbar from "../components/navbar";
 import { NavLink, useNavigate } from "react-router";
+import Button from "../components/Button";
 
 export default function HomePage({ setDataToEdit }) {
   const [result, setResult] = useState([]);
@@ -97,7 +98,7 @@ export default function HomePage({ setDataToEdit }) {
           onSubmit={(e) => {
             e.preventDefault();
             getPub();
-            setCurrentPage(1); // Reset to first page on search
+            setCurrentPage(1);
           }}
           className="mb-8 max-w-2xl mx-auto"
         >
@@ -108,9 +109,10 @@ export default function HomePage({ setDataToEdit }) {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full py-3 px-4 pr-12 border-0 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             />
-            <button
+            <Button
               type="submit"
-              className="absolute right-0 h-full px-6 bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center justify-center"
+              variant="primary"
+              className="absolute right-0 h-full px-6 flex items-center justify-center"
             >
               <svg
                 className="w-5 h-5"
@@ -125,7 +127,7 @@ export default function HomePage({ setDataToEdit }) {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </button>
+            </Button>
           </div>
         </form>
 
@@ -151,9 +153,10 @@ export default function HomePage({ setDataToEdit }) {
                     {el.facility}
                   </p>
                   <div className="flex justify-end space-x-3">
-                    <button
-                      onClick={() => handleEdit(el)} // Pass the entire lodging object
-                      className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors flex items-center gap-2"
+                    <Button
+                      onClick={() => handleEdit(el)}
+                      variant="secondary"
+                      className="flex items-center gap-2"
                     >
                       <svg
                         className="w-4 h-4"
@@ -169,11 +172,12 @@ export default function HomePage({ setDataToEdit }) {
                         />
                       </svg>
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={() => handleDelete(el.id)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
+                      variant="danger"
+                      className="flex items-center gap-2"
                     >
                       <svg
                         className="w-4 h-4"
@@ -189,7 +193,7 @@ export default function HomePage({ setDataToEdit }) {
                         />
                       </svg>
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

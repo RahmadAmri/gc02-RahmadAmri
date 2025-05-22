@@ -32,40 +32,36 @@ export default function Navbar() {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-white rounded-lg w-52 border border-gray-100"
           >
             <li>
-              <NavLink to="/login" end>
-                <a
-                  onClick={() => {
-                    localStorage.removeItem("access_token");
-                    handleLogout("/login");
-                  }}
-                  className="text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
-                >
-                  Logout
-                </a>
+              <NavLink 
+                to="/login" 
+                end
+                className="text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+                onClick={() => {
+                  localStorage.removeItem("access_token");
+                  handleLogout("/login");
+                }}
+              >
+                Logout
               </NavLink>
             </li>
             <li>
-              <NavLink to="/" end>
-                <a
-                  onClick={() => {
-                    handleLogin("/");
-                  }}
-                  className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                >
-                  HomePage
-                </a>
+              <NavLink 
+                to="/" 
+                end
+                className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
+                onClick={() => handleLogin("/")}
+              >
+                HomePage
               </NavLink>
             </li>
             <li>
-              <NavLink to="/add-edit" end>
-                <a
-                  onClick={() => {
-                    handleAdd("/add-edit");
-                  }}
-                  className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                >
-                  Add Lodging
-                </a>
+              <NavLink 
+                to="/add-edit" 
+                end
+                className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
+                onClick={() => handleAdd("/add-edit")}
+              >
+                Add Lodging
               </NavLink>
             </li>
           </ul>

@@ -3,6 +3,8 @@ import Navbar from "../components/navbar";
 import api from "../api/api";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
+// Add import at the top
+import Button from './Button';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -198,7 +200,9 @@ function Login() {
                       onChange={handleChange}
                       className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out"
                     >
-                      <option value="">Select a role</option>
+                      <option disabled selected value="">
+                        Select a role
+                      </option>
                       <option value="Staff">Staff</option>
                       <option value="Admin">Admin</option>
                     </select>
@@ -337,16 +341,18 @@ function Login() {
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out transform hover:-translate-y-0.5"
+              variant="primary"
+              className="w-full flex justify-center py-3 px-4"
             >
               {isLogin ? "Sign In" : "Create Account"}
-            </button>
+            </Button>
 
             <div className="text-center mt-4">
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={() => {
                   setIsLogin(!isLogin);
                   setFormData({
@@ -360,10 +366,8 @@ function Login() {
                 }}
                 className="text-blue-600 hover:text-blue-800 transition-colors"
               >
-                {isLogin
-                  ? "Need an account? Sign up"
-                  : "Already have an account? Sign in"}
-              </button>
+                {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
+              </Button>
             </div>
           </form>
         </div>
