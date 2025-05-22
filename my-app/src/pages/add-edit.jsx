@@ -27,6 +27,7 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
     try {
       const token = localStorage.getItem("access_token");
       if (!token) {
+        navigate("/login");
         return Swal.fire({
           title: "Adding Failed",
           text: "Please login first!",
@@ -102,79 +103,102 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
         e.preventDefault();
         isEdit ? updateLodging() : createLodging();
       }}
-      className="grid grid-cols-2 gap-4 mb-6"
+      className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg"
     >
-      <div className="flex flex-col">
-        <label>Name</label>
-        <input
-          value={form.name}
-          onChange={(e) => onChangeForm("name", e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col">
-        <label>Facility</label>
-        <input
-          value={form.facility}
-          onChange={(e) => onChangeForm("facility", e.target.value)}
-        />
-      </div>
+      <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+        {isEdit ? "Edit Lodging" : "Add New Lodging"}
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700">Name</label>
+          <input
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={form.name}
+            onChange={(e) => onChangeForm("name", e.target.value)}
+            placeholder="Enter lodging name"
+          />
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700">Facility</label>
+          <input
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={form.facility}
+            onChange={(e) => onChangeForm("facility", e.target.value)}
+            placeholder="Enter facilities"
+          />
+        </div>
 
-      <div className="flex flex-col">
-        <label>Room Capacity</label>
-        <input
-          value={form.roomCapacity}
-          type="number"
-          onChange={(e) => onChangeForm("roomCapacity", e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col">
-        <label>Image Url</label>
-        <input
-          value={form.imgUrl}
-          onChange={(e) => onChangeForm("imgUrl", e.target.value)}
-        />
-      </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Room Capacity
+          </label>
+          <input
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={form.roomCapacity}
+            type="number"
+            onChange={(e) => onChangeForm("roomCapacity", e.target.value)}
+            placeholder="Enter room capacity"
+          />
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700">Image URL</label>
+          <input
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={form.imgUrl}
+            onChange={(e) => onChangeForm("imgUrl", e.target.value)}
+            placeholder="Enter image URL"
+          />
+        </div>
 
-      <div className="flex flex-col">
-        <label>Location</label>
-        <input
-          value={form.location}
-          onChange={(e) => onChangeForm("location", e.target.value)}
-        />
-      </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700">Location</label>
+          <input
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={form.location}
+            onChange={(e) => onChangeForm("location", e.target.value)}
+            placeholder="Enter location"
+          />
+        </div>
 
-      <div className="flex flex-col">
-        <label>Price</label>
-        <input
-          type="number"
-          value={form.price}
-          onChange={(e) => onChangeForm("price", e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col col-span-2">
-        <label>Type</label>
-        <select
-          disabled={!types?.length}
-          value={form.TypeId}
-          onChange={(e) => onChangeForm("TypeId", e.target.value)}
-        >
-          <option disabled>Choose type</option>
-          {types?.map((e) => {
-            return (
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700">Price</label>
+          <input
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            type="number"
+            value={form.price}
+            onChange={(e) => onChangeForm("price", e.target.value)}
+            placeholder="Enter price"
+          />
+        </div>
+
+        <div className="flex flex-col space-y-2 col-span-full">
+          <label className="text-sm font-medium text-gray-700">Type</label>
+          <select
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            disabled={!types?.length}
+            value={form.TypeId}
+            onChange={(e) => onChangeForm("TypeId", e.target.value)}
+          >
+            <option value="" disabled>
+              Choose type
+            </option>
+            {types?.map((e) => (
               <option key={e.id} value={e.id}>
                 {e.name}
               </option>
-            );
-          })}
-        </select>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <button
-        type="submit"
-        className=" bg-blue-600 text-white h-9 rounded-full w-fit mx-auto px-6 col-span-2"
-      >
-        {isEdit ? "Update" : "Add"}
-      </button>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="submit"
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+        >
+          {isEdit ? "Update Lodging" : "Add Lodging"}
+        </button>
+      </div>
     </form>
   );
 }

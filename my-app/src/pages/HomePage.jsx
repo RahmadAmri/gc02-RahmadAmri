@@ -7,7 +7,7 @@ import { NavLink, useNavigate } from "react-router";
 export default function HomePage(dataToEdit, setDataToEdit) {
   const isEdit = dataToEdit ? true : false;
   const [result, setResult] = useState([]);
-  const [q, setQ] = useState("");
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const handleEdit = async () => {
@@ -21,6 +21,7 @@ export default function HomePage(dataToEdit, setDataToEdit) {
           text: "Please login first",
           icon: "error",
         });
+        navigate("/login");
       }
     } catch (error) {
       console.log(error);
@@ -38,6 +39,7 @@ export default function HomePage(dataToEdit, setDataToEdit) {
           text: "Please login first",
           icon: "error",
         });
+        navigate("/login");
       }
 
       if (response) {
@@ -61,7 +63,7 @@ export default function HomePage(dataToEdit, setDataToEdit) {
 
   const getPub = async () => {
     try {
-      const response = (await api.get(`/pub?search=${q}`)).data;
+      const response = (await api.get(`/pub?search=${search}`)).data;
       setResult(response);
 
       if (!response.data.length) {
@@ -92,9 +94,9 @@ export default function HomePage(dataToEdit, setDataToEdit) {
           className="mb-6 flex justify-between items-center gap-4"
         >
           <input
-            value={q}
+            value={search}
             placeholder="Search by name..."
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="h-9 w-full px-4 rounded-lg"
           />
           <button
