@@ -3,7 +3,7 @@ import api from "../api/api";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 import Navbar from "../components/navbar";
-import Button from '../components/Button';
+import Button from "../components/Button";
 
 const initialForm = {
   name: "",
@@ -19,10 +19,38 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
   const isEdit = dataToEdit ? true : false;
   const [form, setForm] = useState(initialForm);
   const [types, setTypes] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
   const navigate = useNavigate();
 
   const onChangeForm = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    onChangeForm("imgUrl", previewUrl);
+  };
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await api.patch(
+        `/lodging/${form.id}/upload-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data.imgUrl;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const createLodging = async () => {
@@ -36,24 +64,31 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
           icon: "error",
         });
       }
-      const response = await api.post("/lodging", form);
 
-      if (response) {
-        Swal.fire({
-          title: "Succes Added",
-          text: response.data.message,
-          icon: "success",
-        });
-        navigate("/");
+      let finalForm = { ...form };
+
+      const response = await api.post("/lodging", finalForm);
+
+      if (imageFile && response.data.id) {
+        try {
+          const imgUrl = await uploadImage(imageFile);
+          await api.put(`/lodging/${response.data.id}`, { imgUrl });
+        } catch (error) {
+          console.error("Failed to upload image:", error);
+        }
       }
-      if (!response) {
-        throw "Invalid input";
-      }
+
+      Swal.fire({
+        title: "Success Added",
+        text: response.data.message,
+        icon: "success",
+      });
+      navigate("/");
     } catch (error) {
       console.log(error);
       Swal.fire({
         title: "Error",
-        text: "Please fill all form",
+        text: error.message || "Please fill all form",
         icon: "warning",
       });
     }
@@ -69,9 +104,28 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
           icon: "error",
         });
       }
-      const response = await api.put(`/lodging/${form.id}`, form);
+
+      let finalForm = { ...form };
+
+      if (imageFile) {
+        try {
+          const imgUrl = await uploadImage(imageFile);
+          finalForm.imgUrl = imgUrl;
+        } catch (error) {
+          console.error("Failed to upload image:", error);
+          Swal.fire({
+            title: "Warning",
+            text: "Failed to upload image, proceeding with other updates",
+            icon: "warning",
+          });
+        }
+      }
+
+      const response = await api.put(`/lodging/${form.id}`, finalForm);
       setForm(initialForm);
       setDataToEdit(null);
+      setImageFile(null);
+
       Swal.fire({
         title: "Success Edit",
         text: response.data.message,
@@ -80,6 +134,11 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
       navigate("/");
     } catch (error) {
       console.error(error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Failed to update lodging",
+        icon: "error",
+      });
     }
   };
 
@@ -147,14 +206,25 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
           </div>
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
-              Image URL
+              Upload Image
             </label>
-            <input
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={form.imgUrl}
-              onChange={(e) => onChangeForm("imgUrl", e.target.value)}
-              placeholder="Enter image URL"
-            />
+            <div className="flex flex-col space-y-4">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {form.imgUrl && (
+                <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                  <img
+                    src={form.imgUrl}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col space-y-2">
@@ -201,11 +271,7 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
         </div>
 
         <div className="flex justify-end space-x-4 mt-8">
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full md:w-auto"
-          >
+          <Button type="submit" variant="primary" className="w-full md:w-auto">
             {isEdit ? "Update Lodging" : "Create Lodging"}
           </Button>
         </div>
