@@ -85,8 +85,6 @@ function Login() {
           </form>
         </fieldset>
       </div>
-
-      {/* Cards Grid */}
     </div>
   );
 }

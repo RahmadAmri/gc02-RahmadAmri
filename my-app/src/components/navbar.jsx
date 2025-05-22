@@ -4,7 +4,7 @@ export default function Navbar() {
   const { handleLogout, handleLogin, handleAdd } = useNavigate();
 
   return (
-    <div className="navbar bg-primary text-primary-content shadow-sm">
+    <div className="navbar bg-primary text-primary-content shadow-sm mb-10">
       <div className="navbar-start">
         <div className="dropdown">
           <div
@@ -58,7 +58,7 @@ export default function Navbar() {
               <NavLink to="/add" end>
                 <a
                   onClick={() => {
-                    handleAdd("/add");
+                    handleAdd("/add-edit");
                   }}
                 >
                   Add Lodging

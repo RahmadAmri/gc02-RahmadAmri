@@ -17,6 +17,7 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
   const isEdit = dataToEdit ? true : false;
   const [form, setForm] = useState(initialForm);
   const [types, setTypes] = useState([]);
+  const navigate = useNavigate();
 
   const onChangeForm = (name, value) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -33,13 +34,14 @@ export default function AddEdit({ getAllData, dataToEdit, setDataToEdit }) {
         });
       }
       const response = await api.post("/lodging", form);
-      getAllData();
+
       if (response) {
         Swal.fire({
           title: "Succes Added",
-          text: "Lodging added succesfully",
+          text: response.data.message,
           icon: "success",
         });
+        navigate("/");
       }
       if (!response) {
         throw "Invalid input";
