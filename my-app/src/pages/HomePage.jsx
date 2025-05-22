@@ -11,6 +11,41 @@ export default function HomePage({ setDataToEdit }) {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
+  const handleDetail = async (id) => {
+    try {
+      const response = await api.get(`/pub/${id}`);
+      const data = response.data.data;
+
+      if (data) {
+        Swal.fire({
+          title: data.name,
+          html: `
+            <div class="text-left">
+              <img src="${data.imgUrl}" class="w-full h-64 object-cover mb-4 rounded">
+              <p class="mb-2"><strong>Location:</strong> ${data.location}</p>
+              <p class="mb-2"><strong>Price:</strong> Rp. ${data.price}</p>
+              <p class="mb-2"><strong>Room Capacity:</strong> ${data.roomCapacity} persons</p>
+              <p class="mb-2"><strong>Facilities:</strong></p>
+              <p>${data.facility}</p>
+            </div>
+          `,
+          width: "600px",
+          showCloseButton: true,
+          showConfirmButton: false,
+        });
+      } else {
+        throw new Error("Lodging data not found");
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to load lodging details",
+        icon: "error",
+      });
+    }
+  };
+
   const handleEdit = async (lodging) => {
     try {
       const token = localStorage.getItem("access_token");
@@ -153,6 +188,32 @@ export default function HomePage({ setDataToEdit }) {
                     {el.facility}
                   </p>
                   <div className="flex justify-end space-x-3">
+                    <Button
+                      onClick={() => handleDetail(el.id)}
+                      variant="primary"
+                      className="flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                      Detail
+                    </Button>
                     <Button
                       onClick={() => handleEdit(el)}
                       variant="secondary"

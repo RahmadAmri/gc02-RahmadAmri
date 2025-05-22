@@ -258,7 +258,7 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
               value={form.TypeId}
               onChange={(e) => onChangeForm("TypeId", e.target.value)}
             >
-              <option value="" disabled>
+              <option disabled selected value="">
                 Choose type
               </option>
               {types?.map((e) => (

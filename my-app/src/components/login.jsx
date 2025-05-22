@@ -3,8 +3,7 @@ import Navbar from "../components/navbar";
 import api from "../api/api";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
-// Add import at the top
-import Button from './Button';
+import Button from "./Button";
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -366,7 +365,9 @@ function Login() {
                 }}
                 className="text-blue-600 hover:text-blue-800 transition-colors"
               >
-                {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
+                {isLogin
+                  ? "Need an account? Sign up"
+                  : "Already have an account? Sign in"}
               </Button>
             </div>
           </form>
