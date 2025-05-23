@@ -12,7 +12,7 @@ const initialForm = {
   imgUrl: "",
   location: "",
   price: 0,
-  TypeId: 0,
+  TypeId: "",
 };
 
 export default function AddEdit() {
@@ -134,7 +134,7 @@ export default function AddEdit() {
         text: response.data.message,
         icon: "success",
       });
-      navigate("/");
+      navigate("/cms");
     } catch (error) {
       console.log(error);
       Swal.fire({
@@ -307,7 +307,9 @@ export default function AddEdit() {
                 onChange={(e) => onChangeForm("TypeId", Number(e.target.value))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
               >
-                <option value="">Select Type</option>
+                <option disabled value="">
+                  Select Type
+                </option>
                 {types.map((type) => (
                   <option key={type.id} value={type.id}>
                     {type.name}
