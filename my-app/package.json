@@ -26,6 +26,9 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "@headlessui/react": "^2.2.4",
+    "@uidotdev/usehooks": "^2.4.1",
+    "react-router-dom": "^7.6.0"
   }
 }
