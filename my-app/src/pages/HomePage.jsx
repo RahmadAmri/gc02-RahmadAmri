@@ -5,7 +5,7 @@ import Navbar from "../components/navbar";
 import { NavLink, useNavigate } from "react-router";
 import Button from "../components/Button";
 
-export default function HomePage({ setDataToEdit }) {
+export default function HomePage() {
   const [result, setResult] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,58 +23,6 @@ export default function HomePage({ setDataToEdit }) {
         text: "Failed to load lodging details",
         icon: "error",
       });
-    }
-  };
-
-  const handleEdit = async (lodging) => {
-    try {
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        setDataToEdit(lodging);
-        navigate("/add-edit");
-      } else {
-        Swal.fire({
-          title: "Error Edit",
-          text: "Please login first",
-          icon: "error",
-        });
-        navigate("/login");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await api.delete(`/lodging/${id}`);
-      const token = localStorage.getItem("access_token");
-
-      if (!token) {
-        Swal.fire({
-          title: "Error Delete",
-          text: "Please login first",
-          icon: "error",
-        });
-        navigate("/login");
-      }
-
-      if (response) {
-        Swal.fire({
-          title: "Success delete",
-          text: response.data.message,
-          icon: "success",
-        });
-      } else {
-        Swal.fire({
-          title: "Error Delete",
-          text: "Please login first",
-          icon: "error",
-        });
-      }
-      await getPub();
-    } catch (error) {
-      console.log(error);
     }
   };
 

@@ -29,12 +29,16 @@ function Login() {
         password: formData.password,
       });
 
+      console.log(response);
+
       if (!response) {
         throw "Invalid Email or Password";
       }
 
       if (!formData.email && !formData.password) {
         localStorage.removeItem("access_token");
+        localStorage.removeItem("user_role");
+        localStorage.removeItem("user_id");
         navigate("/login");
         Swal.fire({
           title: "error login",
@@ -48,11 +52,15 @@ function Login() {
           icon: "success",
         });
         localStorage.setItem("access_token", response.data.token);
+        localStorage.setItem("user_role", response.data.role);
+        localStorage.setItem("user_id", response.data.id);
         navigate("/cms");
       }
     } catch (error) {
       console.error(error);
       localStorage.removeItem("access_token");
+      localStorage.removeItem("user_role");
+      localStorage.removeItem("user_id");
       Swal.fire({
         title: "Error Login",
         text: error,
@@ -71,9 +79,7 @@ function Login() {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Welcome Back
             </h2>
-            <p className="text-gray-600">
-              Please sign in to your account
-            </p>
+            <p className="text-gray-600">Please sign in to your account</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">

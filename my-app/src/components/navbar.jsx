@@ -23,6 +23,12 @@ export default function Navbar() {
         {isLoggedIn ? (
           <>
             <NavLink
+              to="/cms"
+              className="btn btn-ghost btn-sm hover:bg-blue-700/50"
+            >
+              CMS
+            </NavLink>
+            <NavLink
               to="/add-edit"
               className="btn btn-ghost btn-sm hover:bg-blue-700/50"
             >
