@@ -65,6 +65,31 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
         });
       }
 
+      const requiredFields = [
+        "name",
+        "facility",
+        "roomCapacity",
+        "location",
+        "price",
+        "TypeId",
+      ];
+      const emptyFields = requiredFields.filter((field) => {
+        const value = form[field];
+        return (
+          value === "" || value === 0 || value === null || value === undefined
+        );
+      });
+
+      if (emptyFields.length > 0) {
+        return Swal.fire({
+          title: "Add error",
+          text: `Please fill in the following fields: ${emptyFields.join(
+            ", "
+          )}`,
+          icon: "warning",
+        });
+      }
+
       let finalForm = { ...form };
 
       const response = await api.post("/lodging", finalForm);
@@ -102,6 +127,31 @@ export default function AddEdit({ dataToEdit, setDataToEdit }) {
           title: "Fail to edit",
           text: "Please login first",
           icon: "error",
+        });
+      }
+
+      const requiredFields = [
+        "name",
+        "facility",
+        "roomCapacity",
+        "location",
+        "price",
+        "TypeId",
+      ];
+      const emptyFields = requiredFields.filter((field) => {
+        const value = form[field];
+        return (
+          value === "" || value === 0 || value === null || value === undefined
+        );
+      });
+
+      if (emptyFields.length > 0) {
+        return Swal.fire({
+          title: "Edit Error",
+          text: `Please fill in the following fields: ${emptyFields.join(
+            ", "
+          )}`,
+          icon: "warning",
         });
       }
 

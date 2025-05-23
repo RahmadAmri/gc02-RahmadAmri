@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from "react-router";
 
 export default function Navbar() {
   const { handleLogout, handleLogin, handleAdd } = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("access_token");
 
   return (
     <div className="navbar bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg mb-10">
@@ -31,22 +32,35 @@ export default function Navbar() {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-white rounded-lg w-52 border border-gray-100"
           >
+            {isLoggedIn ? (
+              <li>
+                <NavLink
+                  to="/login"
+                  end
+                  className="text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+                  onClick={() => {
+                    localStorage.removeItem("access_token");
+                    handleLogout("/login");
+                  }}
+                >
+                  Logout
+                </NavLink>
+              </li>
+            ) : (
+              <li>
+                <NavLink
+                  to="/login"
+                  end
+                  className="text-blue-600 hover:bg-blue-50 rounded-md transition-colors duration-200"
+                  onClick={() => handleLogin("/login")}
+                >
+                  Login
+                </NavLink>
+              </li>
+            )}
             <li>
-              <NavLink 
-                to="/login" 
-                end
-                className="text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
-                onClick={() => {
-                  localStorage.removeItem("access_token");
-                  handleLogout("/login");
-                }}
-              >
-                Logout
-              </NavLink>
-            </li>
-            <li>
-              <NavLink 
-                to="/" 
+              <NavLink
+                to="/"
                 end
                 className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
                 onClick={() => handleLogin("/")}
@@ -54,16 +68,18 @@ export default function Navbar() {
                 HomePage
               </NavLink>
             </li>
-            <li>
-              <NavLink 
-                to="/add-edit" 
-                end
-                className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => handleAdd("/add-edit")}
-              >
-                Add Lodging
-              </NavLink>
-            </li>
+            {isLoggedIn && (
+              <li>
+                <NavLink
+                  to="/add-edit"
+                  end
+                  className="text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200"
+                  onClick={() => handleAdd("/add-edit")}
+                >
+                  Add Lodging
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </div>

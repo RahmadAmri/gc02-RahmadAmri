@@ -66,7 +66,7 @@ function Login() {
     }
   };
 
-  const handleRegister = async (e) => {
+  const handleAddStaff = async (e) => {
     e.preventDefault();
     try {
       const requiredFields = [
@@ -127,17 +127,17 @@ function Login() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              {isLogin ? "Welcome Back" : "Create Account"}
+              {isLogin ? "Welcome Back" : "Create New Staff Account"}
             </h2>
             <p className="text-gray-600">
               {isLogin
                 ? "Please sign in to your account"
-                : "Please fill in your details"}
+                : "Please fill staff details"}
             </p>
           </div>
 
           <form
-            onSubmit={isLogin ? handleLogin : handleRegister}
+            onSubmit={isLogin ? handleLogin : handleAddStaff}
             className="space-y-6"
           >
             {!isLogin && (
@@ -203,7 +203,6 @@ function Login() {
                         Select a role
                       </option>
                       <option value="Staff">Staff</option>
-                      <option value="Admin">Admin</option>
                     </select>
                   </div>
                 </div>
@@ -345,7 +344,7 @@ function Login() {
               variant="primary"
               className="w-full flex justify-center py-3 px-4"
             >
-              {isLogin ? "Sign In" : "Create Account"}
+              {isLogin ? "Sign In" : "Create Staff Account"}
             </Button>
 
             <div className="text-center mt-4">
@@ -366,7 +365,7 @@ function Login() {
                 className="text-blue-600 hover:text-blue-800 transition-colors"
               >
                 {isLogin
-                  ? "Need an account? Sign up"
+                  ? "Create New Staff Account"
                   : "Already have an account? Sign in"}
               </Button>
             </div>
