@@ -6,6 +6,7 @@ import AddEdit from "./pages/add-edit.jsx";
 import Login from "./components/login.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import Detail from "./pages/detail.jsx";
+import Cms from "./pages/cms.jsx";
 
 function App() {
   const [dataToEdit, setDataToEdit] = useState(null);
@@ -27,6 +28,7 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/detail/:id" element={<Detail />} />
+        <Route path="/cms" element={<Cms />} />
       </Routes>
     </BrowserRouter>
   );
