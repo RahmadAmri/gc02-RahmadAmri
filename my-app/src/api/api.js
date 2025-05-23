@@ -2,7 +2,7 @@ import axios from "axios";
 import { redirect } from "react-router";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: process.env.VITE_APP_API_URL,
 });
 
 api.interceptors.request.use(
