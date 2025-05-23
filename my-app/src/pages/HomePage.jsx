@@ -15,29 +15,7 @@ export default function HomePage({ setDataToEdit }) {
 
   const handleDetail = async (id) => {
     try {
-      const response = await api.get(`/pub/${id}`);
-      const data = response.data.data;
-
-      if (data) {
-        Swal.fire({
-          title: data.name,
-          html: `
-            <div class="text-left">
-              <img src="${data.imgUrl}" class="w-full h-64 object-cover mb-4 rounded">
-              <p class="mb-2"><strong>Location:</strong> ${data.location}</p>
-              <p class="mb-2"><strong>Price:</strong> Rp. ${data.price}</p>
-              <p class="mb-2"><strong>Room Capacity:</strong> ${data.roomCapacity} persons</p>
-              <p class="mb-2"><strong>Facilities:</strong></p>
-              <p>${data.facility}</p>
-            </div>
-          `,
-          width: "600px",
-          showCloseButton: true,
-          showConfirmButton: false,
-        });
-      } else {
-        throw new Error("Lodging data not found");
-      }
+      navigate(`/detail/${id}`);
     } catch (error) {
       console.log(error);
       Swal.fire({

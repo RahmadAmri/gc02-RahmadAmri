@@ -48,7 +48,7 @@ function Login() {
         });
       } else {
         Swal.fire({
-          title: "Success login",
+          title: "Success Login",
           text: "Welcome Back",
           icon: "success",
         });
